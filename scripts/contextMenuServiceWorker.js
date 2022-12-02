@@ -12,9 +12,11 @@ const getKey = () => {
 //Generate OpenAI completion
 const generate = async (prompt) => {
     //Get API key from storage
+    console.log("test2")
     const key = await getKey();
     const url = 'https://api.openai.com/v1/completions';
 
+    console.log("test3")
     //Call completions endpoint
     const completionResponse = await fetch(url, {
         method: 'POST',
@@ -32,6 +34,7 @@ const generate = async (prompt) => {
 
     )
 
+    console.log("test3")
     //Select top choice and send back
     const completion = await completionResponse.json();
     return completion.choices.pop();
@@ -41,6 +44,7 @@ const generate = async (prompt) => {
 
 
 const generateCompletionAction = async (info) => {
+    console.log("clicked")
     try {
         const { selectionText } = info;
         const basePromptPrefix = `
@@ -48,6 +52,7 @@ const generateCompletionAction = async (info) => {
         Title: 
         `
 
+        console.log("text being processed")
         const baseCompletion = await generate(`${basePromptPrefix}${selectionText}`)
         console.log(baseCompletion.text)
     } catch (error) {
