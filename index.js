@@ -11,10 +11,13 @@ const encode = (input) =>{
 }
 
 const saveKey = async () => {
-    const input = document.getElementbyId('key_input');
+    const input = document.getElementById('key_input');
+
 
     if(input){
         const {value} = input;
+        console.log(value)
+
 
         //Encode String
         const encodedValue = encode(value);
@@ -43,3 +46,4 @@ checkForKey().then((response) => {
         document.getElementById('key_entered').style.display = 'block';
     }
 })
+
