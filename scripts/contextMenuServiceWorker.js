@@ -12,11 +12,11 @@ const getKey = () => {
 //Generate OpenAI completion
 const generate = async (prompt) => {
     //Get API key from storage
-    console.log("test2")
+    
     const key = await getKey();
     const url = 'https://api.openai.com/v1/completions';
 
-    console.log("test3")
+    
     //Call completions endpoint
     const completionResponse = await fetch(url, {
         method: 'POST',
@@ -34,7 +34,7 @@ const generate = async (prompt) => {
 
     )
 
-    console.log("test3")
+    
     //Select top choice and send back
     const completion = await completionResponse.json();
     return completion.choices.pop();
@@ -50,11 +50,19 @@ const generateCompletionAction = async (info) => {
         const basePromptPrefix = `
         Write me a detailed table of contents for a blog post with the title below
         Title: 
+        `;
+        const baseCompletion = await generate(`${basePromptPrefix}${selectionText}`)
+
+        const secondPrompt = `
+            Take the table of contents and title of the blog post below and generate a blog post written in thwe style of Paul Graham. Make it feel like a story. Don't just list the points. Go deep into each one. Explain why. 
+            Title: ${selectionText}
+            Table of Contents: ${baseCompletion.text}
+            Blog Post:
         `
 
-        console.log("text being processed")
-        const baseCompletion = await generate(`${basePromptPrefix}${selectionText}`)
-        console.log(baseCompletion.text)
+        const secondPromptCompletion = await generate(secondPrompt)
+        console.log(secondPromptCompletion.text)
+
     } catch (error) {
         console.log(error);
     }
