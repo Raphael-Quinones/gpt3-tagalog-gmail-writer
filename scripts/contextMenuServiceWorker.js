@@ -9,6 +9,22 @@ const getKey = () => {
     })
 }
 
+const sendMessage = (content) => {
+    chrome.tabs.query({ active: true, currentWindow: true}, (tabs) => {
+        const activeTab = tabs[0].id;
+
+        chrome.tabs.sendMessage(
+            activeTab,
+            { message: 'inject', content},
+            (response) => {
+                if (response.status === 'failed') {
+                    console.log('injection failed');
+                }
+            }
+        )
+    })
+}
+
 //Generate OpenAI completion
 const generate = async (prompt) => {
     //Get API key from storage
