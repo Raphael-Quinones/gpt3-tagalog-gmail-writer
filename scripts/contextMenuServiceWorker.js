@@ -60,8 +60,8 @@ const generate = async (prompt) => {
 
 
 const generateCompletionAction = async (info) => {
-    console.log("clicked")
     try {
+        sendMessage('generating...')
         const { selectionText } = info;
         const basePromptPrefix = `
         Write me a detailed table of contents for a blog post with the title below
@@ -77,10 +77,13 @@ const generateCompletionAction = async (info) => {
         `
 
         const secondPromptCompletion = await generate(secondPrompt)
-        console.log(secondPromptCompletion.text)
+
+        sendMessage(secondPromptCompletion.text)
 
     } catch (error) {
         console.log(error);
+
+        sendMessage(error.toString())
     }
 }
 
