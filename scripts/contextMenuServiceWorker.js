@@ -1,96 +1,94 @@
 const getKey = () => {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.get(['openai-key'], (result) => {
-            if(result['openai-key']) {
-                const decodedKey = atob(result['openai-key']);
-                resolve(decodedKey)
-            }
-        })
-    })
-}
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(['openai-key'], (result) => {
+      if (result['openai-key']) {
+        const decodedKey = atob(result['openai-key']);
+        resolve(decodedKey);
+      }
+    });
+  });
+};
 
 const sendMessage = (content) => {
-    chrome.tabs.query({ active: true, currentWindow: true}, (tabs) => {
-        const activeTab = tabs[0].id;
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const activeTab = tabs[0].id;
 
-        chrome.tabs.sendMessage(
-            activeTab,
-            { message: 'inject', content},
-            {}
-        )
-    })
-}
+    chrome.tabs.sendMessage(
+      activeTab,
+      { message: 'inject', content },
+      (response) => {
+        if (response.status === 'failed') {
+          console.log('injection failed.');
+        }
+      }
+    );
+  });
+};
 
-//Generate OpenAI completion
 const generate = async (prompt) => {
-    //Get API key from storage
-    
-    const key = await getKey();
-    const url = 'https://api.openai.com/v1/completions';
-
-    
-    //Call completions endpoint
-    const completionResponse = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${key}`
-        },
-        body: JSON.stringify({
-            model: 'text-davinci-003',
-            prompt: prompt,
-            max_tokens: 1250,
-            temperature: 0.7
-        })
-    }
-
-    )
-
-    
-    //Select top choice and send back
-    const completion = await completionResponse.json();
-    return completion.choices.pop();
-
-
+  const key = await getKey();
+  const url = 'https://api.openai.com/v1/completions';
+	
+  const completionResponse = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${key}`,
+    },
+    body: JSON.stringify({
+      model: 'text-davinci-003',
+      prompt: prompt,
+      max_tokens: 1250,
+      temperature: 0.7,
+    }),
+  });
+	
+  const completion = await completionResponse.json();
+  return completion.choices.pop();
 }
-
 
 const generateCompletionAction = async (info) => {
-    try {
-        sendMessage('generating...')
-        const { selectionText } = info;
-        const basePromptPrefix = `
-        Write me a detailed table of contents for a blog post with the title below
-        Title: 
-        `;
-        const baseCompletion = await generate(`${basePromptPrefix}${selectionText}`)
+	try {
+		// Send mesage with generating text (this will be like a loading indicator)
+		sendMessage('generating...');
+	
+    const { selectionText } = info;
+    const basePromptPrefix =
+		`
+		Write me a detailed table of contents for a blog post with the title below.
 
-        const secondPrompt = `
-            Take the table of contents and title of the blog post below and generate a blog post written in thwe style of Paul Graham. Make it feel like a story. Don't just list the points. Go deep into each one. Explain why. 
-            Title: ${selectionText}
-            Table of Contents: ${baseCompletion.text}
-            Blog Post:
-        `
+		Title:
+		`;
 
-        const secondPromptCompletion = await generate(secondPrompt)
+    const baseCompletion = await generate(`${basePromptPrefix}${selectionText}`);
+ 
+	const secondPrompt = 
+	  `
+	  Take the table of contents and title of the blog post below and generate a blog post written in the style of Paul Graham. Make it feel like a story. Don't just list the points. Go deep into each one. Explain why.
 
-        sendMessage(secondPromptCompletion.text)
+	  Title: ${selectionText}
 
-    } catch (error) {
-        console.log(error);
+	  Table of Contents: ${baseCompletion.text}
 
-        sendMessage(error.toString())
-    }
-}
+	  Blog Post:
+	  `;
+		
+    const secondPromptCompletion = await generate(secondPrompt);
+		
+	// Send the output when we're all done
+	sendMessage(secondPromptCompletion.text);
+  } catch (error) {
+    console.log(error);
 
-//Adds the "Generate Email" button when you right click
+		// Add this here as well to see if we run into any errors!
+		sendMessage(error.toString());
+  }
+};
+
 chrome.contextMenus.create({
-    id: 'context-run',
-    title: 'Generate Email',
-    contexts: ['selection'],
-    });
-//listens for when a contextMenu gets clicked for this extension
+  id: 'context-run',
+  title: 'Generate blog post',
+  contexts: ['selection'],
+});
+
 chrome.contextMenus.onClicked.addListener(generateCompletionAction);
-
-
-
