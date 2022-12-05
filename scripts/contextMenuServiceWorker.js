@@ -16,11 +16,7 @@ const sendMessage = (content) => {
         chrome.tabs.sendMessage(
             activeTab,
             { message: 'inject', content},
-            (response) => {
-                if (response.status === 'failed') {
-                    console.log('injection failed');
-                }
-            }
+            {}
         )
     })
 }
