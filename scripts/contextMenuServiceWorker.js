@@ -10,8 +10,8 @@ const getKey = () => {
 };
 
 const sendMessage = (content) => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    const activeTab = tabs[0].id;
+  chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
+    const activeTab = tab[0].id;
 
     chrome.tabs.sendMessage(
       activeTab,
@@ -24,6 +24,7 @@ const sendMessage = (content) => {
     );
   });
 };
+
 
 const generate = async (prompt) => {
   const key = await getKey();
@@ -55,22 +56,22 @@ const generateCompletionAction = async (info) => {
     const { selectionText } = info;
     const basePromptPrefix =
 		`
-		Write me a detailed table of contents for a blog post with the title below.
+		Write me a detailed table of contents for an email with the topic below.
 
-		Title:
+		Topic:
 		`;
 
     const baseCompletion = await generate(`${basePromptPrefix}${selectionText}`);
  
 	const secondPrompt = 
 	  `
-	  Take the table of contents and title of the blog post below and generate a blog post written in the style of Paul Graham. Make it feel like a story. Don't just list the points. Go deep into each one. Explain why.
+	  Take the table of contents and topic of the email below and generate a full formal email. .
 
-	  Title: ${selectionText}
+	  Topic: ${selectionText}
 
 	  Table of Contents: ${baseCompletion.text}
 
-	  Blog Post:
+	  Email:
 	  `;
 		
     const secondPromptCompletion = await generate(secondPrompt);
@@ -87,7 +88,7 @@ const generateCompletionAction = async (info) => {
 
 chrome.contextMenus.create({
   id: 'context-run',
-  title: 'Generate blog post',
+  title: 'Generate Email',
   contexts: ['selection'],
 });
 
