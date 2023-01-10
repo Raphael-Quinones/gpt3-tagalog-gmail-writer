@@ -28,6 +28,7 @@ const sendMessage = (content) => {
 const generate = async (prompt) => {
   const key = await getKey();
   const url = 'https://api.openai.com/v1/completions';
+
 	
   const completionResponse = await fetch(url, {
     method: 'POST',
@@ -42,6 +43,8 @@ const generate = async (prompt) => {
       temperature: 0.7,
     }),
   });
+
+  console.log(completionResponse)
 	
   const completion = await completionResponse.json();
   return completion.choices.pop();
