@@ -10,14 +10,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 const insert = (content) => {
     //get div with classname droid which includes p tag for writing
-    const elements = document.getElementsByClassName('droid');
+    const elements = document.getElementsByClassName('Am Al editable LW-avf tS-tW');
 
+    console.log(elements)
     if(elements.length === 0) {
         return;
     }
 
     //get topmost div with name droid
     const element = elements[0]
+    console.log(element)
+
     console.log(element)
 
     //get first p tag to replace it in the top most part of the area
