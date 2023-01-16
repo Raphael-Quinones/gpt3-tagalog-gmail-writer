@@ -73,9 +73,9 @@ const generateCompletionAction = async (info) => {
             const { selectionText } = info;
             const basePromptPrefix =
             `
-            Write me a detailed table of contents for an email with the topic below.
+            Write me a detailed english table of contents for an english email from the tagalog instructions/topic below.
       
-            Topic:
+            Tagalog Topic:
             `;
       
             const baseCompletion = await generate(`${basePromptPrefix}${selectionText}`);
@@ -106,7 +106,7 @@ const generateCompletionAction = async (info) => {
 
 chrome.contextMenus.create({
   id: 'context-run',
-  title: 'Generate Email',
+  title: 'Generate Tagalog Email',
   contexts: ['selection'],
 });
 

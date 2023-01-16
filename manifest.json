@@ -1,6 +1,6 @@
 {
-  "name": "AI Email Writer",
-  "description": "Write up emails in no time!",
+  "name": "eLiham",
+  "description": "Tagalog English email writer",
   "version": "0.0.0.1",
   "manifest_version": 3,
   "icons": {
@@ -11,7 +11,7 @@
   },
   "action": {
     "default_popup": "index.html",
-    "default_title": "ProfMail"
+    "default_title": "eLiham"
   },
   "background": {
     "service_worker": "scripts/contextMenuServiceWorker.js"
