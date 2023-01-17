@@ -2,7 +2,7 @@
 let clickCounter = 0;
 
 // Specify the maximum number of clicks allowed
-const MAX_CLICKS = 2;
+const MAX_CLICKS = 50;
 
 const getKey = () => {
   return new Promise((resolve, reject) => {
