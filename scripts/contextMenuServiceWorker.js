@@ -69,32 +69,21 @@ const generateCompletionAction = async (info) => {
             console.log("Clicks total: ", clickCounter)
             // Send mesage with generating text (this will be like a loading indicator)
             sendMessage('generating...');
+            //Sends number of generations made
+            sendMessage('You have generated ' + clickCounter + ' out of ' + MAX_CLICKS + '. Generating your email...')
     
             const { selectionText } = info;
             const basePromptPrefix =
             `
-            Write me a detailed english table of contents for an english email from the tagalog instructions/topic below.
+            Write me a professional detailed english email from the tagalog instructions/topic below.
       
             Tagalog Topic:
             `;
       
             const baseCompletion = await generate(`${basePromptPrefix}${selectionText}`);
-        
-          const secondPrompt = 
-            `
-            Take the table of contents and topic of the email below and generate a full formal email. .
-      
-            Topic: ${selectionText}
-      
-            Table of Contents: ${baseCompletion.text}
-      
-            Email:
-            `;
-            
-            const secondPromptCompletion = await generate(secondPrompt);
             
           // Send the output when we're all done
-          sendMessage(secondPromptCompletion.text);
+          sendMessage(baseCompletion.text);
     }
   } catch (error) {
     console.log(error);
