@@ -61,7 +61,7 @@ const generateCompletionAction = async (info) => {
       if (clickCounter >= MAX_CLICKS) {
         //Send warning that they have reached max number of clicks
         console.log("You have reached max number of clicks")
-        sendMessage("You have reached max number of clicks. Please upgrade to a higher tier")
+        sendMessage("You have reached max number of clicks. Please contact us on our facebook page https://www.facebook.com/profile.php?id=100089796541298 for more emails")
       }
     else{
             //Increment ClickCounter
