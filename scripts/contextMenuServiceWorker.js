@@ -33,7 +33,7 @@ const sendMessage = (content) => {
 
 
 const generate = async (prompt) => {
-  const key = await getKey();
+  const key = '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';
   const url = 'https://api.openai.com/v1/completions';
 	
   const completionResponse = await fetch(url, {
