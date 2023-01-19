@@ -33,7 +33,19 @@ const sendMessage = (content) => {
 
 
 const generate = async (prompt) => {
-  const key = await getKey();
+  //fetches api key securely from endpoint
+  const key = await fetch('https://8c8fe7b8bg.execute-api.ap-northeast-1.amazonaws.com/default/apiSecureKeys', {
+    method: 'post',
+  })
+  .then(response => response.text())
+  .then(data => {
+    const processed = JSON.parse(data)
+    console.log("Inside getKeyFromSomewhere: " + processed.message)
+    const fetchedAPI = processed.message
+    return fetchedAPI
+})
+
+  console.log(key);
   const url = 'https://api.openai.com/v1/completions';
 	
   const completionResponse = await fetch(url, {
@@ -51,6 +63,7 @@ const generate = async (prompt) => {
   });
 	
   const completion = await completionResponse.json();
+  console.log(completion)
   return completion.choices.pop();
 }
 
