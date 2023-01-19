@@ -1,7 +1,7 @@
 {
   "name": "eLiham",
   "description": "Tagalog English email writer",
-  "version": "0.0.0.1",
+  "version": "0.0.0.2",
   "manifest_version": 3,
   "icons": {
     "48": "assets/48.png",
