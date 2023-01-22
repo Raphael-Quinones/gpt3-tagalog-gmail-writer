@@ -1,5 +1,6 @@
 // Create a counter to keep track of the number of clicks
-let clickCounter = 0;
+const something = chrome.storage.sync.set({ "clickCounter": '0' }).then(() => {
+});
 
 // Specify the maximum number of clicks allowed
 const MAX_CLICKS = 50;
@@ -14,6 +15,35 @@ const getKey = () => {
     });
   });
 };
+
+const getClicks = () => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(['clickCounter'], (result) => {
+      if (result['clickCounter']) {
+        const counts = result['clickCounter'];
+        console.log("Total generations: " + counts)
+        resolve(counts);
+      }
+    });
+  });
+};
+
+const incrementClickCounter = async () => {
+  const oldClicks = await getClicks();
+
+  //Increment clickCounter
+  oldCount = parseInt(oldClicks) //convert to int since storage.set doesn't let me store ints
+  newCount = oldCount + 1
+  stringCount = newCount.toString() //convert newCount to string to be able to store in chrome storage
+  
+  chrome.storage.sync.set({ 'clickCounter': stringCount }).then(() => {
+    // Send mesage with generating text (this will be like a loading indicator)
+    sendMessage('generating...');
+    //Sends number of generations made
+    sendMessage('You have generated ' + stringCount + ' out of ' + MAX_CLICKS + '. Generating your email...')
+  });
+}
+
 
 const sendMessage = (content) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
@@ -45,6 +75,7 @@ const generate = async (prompt) => {
     return fetchedAPI
 })
 
+
   console.log(key);
   const url = 'https://api.openai.com/v1/completions';
 	
@@ -63,7 +94,6 @@ const generate = async (prompt) => {
   });
 	
   const completion = await completionResponse.json();
-  console.log(completion)
   return completion.choices.pop();
 }
 
@@ -71,20 +101,18 @@ const generate = async (prompt) => {
 
 const generateCompletionAction = async (info) => {
 	try {
-      if (clickCounter >= MAX_CLICKS) {
+      //get clickCounter from storage
+      const getCounterRaw = await getClicks();
+      const getCounter = parseInt(getCounterRaw);
+      if (getCounter >= MAX_CLICKS) {
         //Send warning that they have reached max number of clicks
         console.log("You have reached max number of clicks")
         sendMessage("You have reached max number of clicks. Please contact us on our facebook page https://www.facebook.com/profile.php?id=100089796541298 for more emails")
+    
       }
     else{
-            //Increment ClickCounter
-            clickCounter++;
-            console.log("Clicks total: ", clickCounter)
-            // Send mesage with generating text (this will be like a loading indicator)
-            sendMessage('generating...');
-            //Sends number of generations made
-            sendMessage('You have generated ' + clickCounter + ' out of ' + MAX_CLICKS + '. Generating your email...')
-    
+            await incrementClickCounter();
+
             const { selectionText } = info;
             const basePromptPrefix =
             `

@@ -23,7 +23,7 @@ const saveKey = async () => {
         const encodedValue = encode(value);
 
         //Save to google storage
-        chrome.storage.local.set({'openai-key': encodedValue }, () => {
+        chrome.storage.local.set({'openai-key': "encodedValue" }, () => {
             document.getElementById('key_needed').style.display = 'none';
             document.getElementById('key_entered').style.display = 'block';
         }
