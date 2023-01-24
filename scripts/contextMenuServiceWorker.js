@@ -1,6 +1,10 @@
-// Create a counter to keep track of the number of clicks
-const something = chrome.storage.sync.set({ "clickCounter": '0' }).then(() => {
+//initialize when installed
+chrome.runtime.onInstalled.addListener(function() {
+  // Create a counter to keep track of the number of clicks
+  const something = chrome.storage.sync.set({ "clickCounter": '0' }).then(() => {
+  });
 });
+
 
 // Specify the maximum number of clicks allowed
 const MAX_CLICKS = 50;
